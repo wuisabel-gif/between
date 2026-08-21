@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f3ef">
+  <meta name="description" content="Between is a user-controlled communication aid for autistic people who want another way to examine ambiguous digital messages.">
+  <title>Between — a second look at the in-between</title>
+  <link rel="stylesheet" href="styles.css">
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <div class="app-shell" id="top">
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="Between home">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span>between</span>
+      </a>
+      <p class="brand-note">a second look at the in-between</p>
+      <div class="top-actions">
+        <span class="local-pill"><span class="status-dot" aria-hidden="true"></span> local demo</span>
+        <button class="button button-small button-quiet" id="privacyButton" type="button" aria-haspopup="dialog">
+          <svg aria-hidden="true" viewBox="0 0 20 20" fill="none"><path d="M10 2.5 16 5v4.4c0 3.7-2.4 6.9-6 8.1-3.6-1.2-6-4.4-6-8.1V5l6-2.5Z" stroke="currentColor" stroke-width="1.45"/><path d="M7.3 10.1 9.1 12l3.7-4" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          privacy + settings
+        </button>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="intro wrap" aria-labelledby="page-title">
+        <p class="eyebrow">A COMMUNICATION AID FOR AUTISTIC PEOPLE</p>
+        <h1 id="page-title">When the words are clear, <br><em>but the meaning isn't.</em></h1>
+        <p class="intro-copy">Between is for autistic people who want another way to examine an ambiguous message. It lays out the literal reading, a few plausible alternatives, and the clues that make the situation uncertain — so you can choose what feels useful and decide what to do next.</p>
+        <div class="principle-row">
+          <span><i class="principle-icon" aria-hidden="true">01</i> possibilities, not verdicts</span>
+          <span><i class="principle-icon" aria-hidden="true">02</i> context before labels</span>
+          <span><i class="principle-icon" aria-hidden="true">03</i> click before sending</span>
+        </div>
+      </section>
+
+      <section class="workspace wrap" aria-label="Message interpretation demo">
+        <aside class="thread-column" aria-labelledby="thread-heading">
+          <div class="thread-heading">
+            <div>
+              <p class="eyebrow">OPEN THREAD</p>
+              <h2 id="thread-heading">Pick a message <br>to look at twice.</h2>
+            </div>
+            <span class="thread-count" id="threadCount">3 / 3</span>
+          </div>
+          <p class="thread-instruction">The selected message is analyzed with only the nearby context shown here.</p>
+
+          <nav class="sample-nav" aria-label="Example conversations">
+            <button class="sample-tab is-active" type="button" data-sample="sarcasm" aria-pressed="true"><span>01</span> late update</button>
+            <button class="sample-tab" type="button" data-sample="permission" aria-pressed="false"><span>02</span> open choice</button>
+            <button class="sample-tab" type="button" data-sample="fine" aria-pressed="false"><span>03</span> “fine”</button>
+          </nav>
+
+          <div class="thread-card">
+            <div class="thread-card-top">
+              <div class="person">
+                <span class="avatar" aria-hidden="true">M</span>
+                <div><strong id="contactName">Maya</strong><span id="threadChannel">weekend plans</span></div>
+              </div>
+              <span class="context-length"><span class="context-dot" aria-hidden="true"></span><span id="contextCount">3 messages</span></span>
+            </div>
+            <div class="messages" id="messages"></div>
+            <div class="thread-card-bottom">
+              <svg aria-hidden="true" viewBox="0 0 20 20" fill="none"><path d="M5 6.4h10M5 10h7.3M5 13.6h4.6" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/><path d="M3.5 3.7h13v9.1a1.7 1.7 0 0 1-1.7 1.7h-5.1l-3.3 2.2v-2.2H5.2a1.7 1.7 0 0 1-1.7-1.7V3.7Z" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/></svg>
+              <span><strong id="contextNotice">3 messages included</strong> · no names sent in this demo</span>
+            </div>
+          </div>
+
+          <div class="context-editor">
+            <div class="editor-heading">
+              <div>
+                <p class="eyebrow">MAKE IT YOURS</p>
+                <h3>Try a different message</h3>
+              </div>
+              <span class="optional-label">optional</span>
+            </div>
+            <label for="customMessage">Message to look at</label>
+            <textarea id="customMessage" rows="2" placeholder="Paste a message here…"></textarea>
+            <label for="customContext">What came before?</label>
+            <textarea id="customContext" rows="3" placeholder="Add the smallest amount of context that may change the reading…"></textarea>
+            <button class="button button-dark full-width" id="customAnalyze" type="button">
+              <span>Analyze this message</span>
+              <svg aria-hidden="true" viewBox="0 0 20 20" fill="none"><path d="M4 10h11M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <p class="editor-note"><span aria-hidden="true">↳</span> This is a local demo heuristic, not a language model.</p>
+          </div>
+        </aside>
+
+        <section class="reading-column" aria-labelledby="reading-heading">
+          <h2 class="sr-only" id="reading-heading">Message interpretation</h2>
+          <div id="readingPanel" aria-live="polite"></div>
+        </section>
+      </section>
+
+      <section class="how-section wrap" aria-labelledby="how-heading">
+        <div class="section-intro">
+          <p class="eyebrow">DESIGNED FOR AUTISTIC USERS, ON YOUR TERMS</p>
+          <h2 id="how-heading">The useful part is<br><em>noticing what we don't know.</em></h2>
+        </div>
+        <div class="how-grid">
+          <article class="how-card">
+            <span class="card-number">01</span>
+            <h3>Start with the words</h3>
+            <p>What the message literally says stays visible. An implied meaning should never erase the plain reading.</p>
+          </article>
+          <article class="how-card accent-card">
+            <span class="card-number">02</span>
+            <h3>Keep more than one door open</h3>
+            <p>People can be sarcastic, playful, tired, indirect, or simply literal. The interface makes room for that.</p>
+          </article>
+          <article class="how-card">
+            <span class="card-number">03</span>
+            <h3>Choose a low-pressure next step</h3>
+            <p>A clarifying question is often safer than guessing. Between offers a prompt, never an instruction.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="closing-note wrap" aria-labelledby="closing-heading">
+        <div class="closing-mark" aria-hidden="true"><span></span><span></span></div>
+        <div>
+          <p class="eyebrow">A SMALL PROMISE</p>
+          <h2 id="closing-heading">You do not have to<br>read between the lines alone.</h2>
+          <p>Between is a user-controlled accessibility layer for digital conversation. It is designed for autistic people, private by default, careful about uncertainty, and always willing to say “there isn't enough information yet.”</p>
+        </div>
+        <button class="button button-outline" id="closingPrivacyButton" type="button">See privacy choices <span aria-hidden="true">↗</span></button>
+      </section>
+    </main>
+
+    <footer class="footer wrap">
+      <span><strong>between</strong> / an early product prototype</span>
+      <span>Not a diagnosis. Not a mind reader. A tool for a second look.</span>
+    </footer>
+  </div>
+
+  <dialog class="privacy-dialog" id="privacyDialog" aria-labelledby="privacyTitle">
+    <form method="dialog" class="dialog-card">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">YOUR READING BOUNDARY</p>
+          <h2 id="privacyTitle">Privacy + settings</h2>
+        </div>
+        <button class="close-button" value="cancel" aria-label="Close privacy and settings"><span aria-hidden="true">×</span></button>
+      </div>
+      <div class="privacy-lede">
+        <div class="privacy-shield" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none"><path d="M10 2.5 16 5v4.4c0 3.7-2.4 6.9-6 8.1-3.6-1.2-6-4.4-6-8.1V5l6-2.5Z" stroke="currentColor" stroke-width="1.35"/><path d="M7.3 10.1 9.1 12l3.7-4" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <p><strong>This prototype does not send or save your messages.</strong> Analysis runs from local demo fixtures in your browser. A future extension should make the same boundary visible every time it reads context.</p>
+      </div>
+      <div class="privacy-list">
+        <div><span class="check-mark" aria-hidden="true">✓</span><span><strong>Click to analyze</strong><small>Nothing is interpreted until you ask.</small></span></div>
+        <div><span class="check-mark" aria-hidden="true">✓</span><span><strong>Minimum context</strong><small>Use only the nearby messages that matter.</small></span></div>
+        <div><span class="check-mark" aria-hidden="true">✓</span><span><strong>No training on messages</strong><small>This demo has no model provider or account.</small></span></div>
+        <div><span class="check-mark" aria-hidden="true">✓</span><span><strong>Visible boundary</strong><small>The panel tells you what it considered.</small></span></div>
+      </div>
+      <div class="settings-section">
+        <div class="setting-row">
+          <div><h3>Analysis mode</h3><p>When should a future extension offer a reading?</p></div>
+          <fieldset class="radio-stack" id="analysisMode">
+            <legend class="sr-only">Analysis mode</legend>
+            <label><input type="radio" name="mode" value="click" checked><span><strong>Click to analyze</strong><small>Recommended</small></span></label>
+            <label><input type="radio" name="mode" value="ambiguous"><span><strong>Ambiguous messages only</strong><small>Still asks before showing a reading</small></span></label>
+            <label><input type="radio" name="mode" value="all"><span><strong>All messages</strong><small>More interruption and more context exposure</small></span></label>
+          </fieldset>
+        </div>
+        <div class="setting-row compact-setting">
+          <div><h3>Context length</h3><p>Keep the window as small as possible.</p></div>
+          <label class="select-wrap" for="contextLength"><span class="sr-only">Context length</span><select id="contextLength"><option value="3">3 messages</option><option value="5">5 messages</option><option value="10">10 messages</option></select><span aria-hidden="true">⌄</span></label>
+        </div>
+      </div>
+      <div class="dialog-footer"><span class="saved-state" id="savedState">Saved on this device</span><button class="button button-dark" value="default">Done</button></div>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>

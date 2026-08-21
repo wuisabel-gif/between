@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BetweenInterpretation",
+  "description": "The structured output contract Between models must produce for one target message.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "literalMeaning",
+    "possibleImpliedMeanings",
+    "possibleEmotions",
+    "speechAct",
+    "literalness",
+    "confidence",
+    "evidence",
+    "missingContext",
+    "suggestedAction",
+    "suggestedMessage"
+  ],
+  "properties": {
+    "literalMeaning": {
+      "type": "string",
+      "minLength": 1,
+      "description": "What the words say on their face."
+    },
+    "possibleImpliedMeanings": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Alternative readings beyond the literal one; may include the literal reading as a possibility when relevant."
+    },
+    "possibleEmotions": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 4,
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Hedged emotion possibilities ('possibly frustrated'), never asserted as fact."
+    },
+    "speechAct": {
+      "type": "string",
+      "minLength": 1,
+      "description": "What the message does in the conversation (e.g., soft refusal, indirect request)."
+    },
+    "literalness": {
+      "enum": ["literal", "possibly-nonliteral", "unclear"],
+      "description": "How likely the message is meant beyond its literal words."
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Strength of contextual support for the leading nonliteral reading. High values should be rare."
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Contextual cues actually used, phrased as observations."
+    },
+    "missingContext": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Information that would change the reading; empty array when context is sufficient."
+    },
+    "suggestedAction": {
+      "type": "string",
+      "minLength": 1,
+      "description": "A reversible, low-pressure next step for the reader."
+    },
+    "suggestedMessage": {
+      "type": ["string", "null"],
+      "description": "Optional example phrasing for a clarifying message, or null."
+    }
+  }
+}

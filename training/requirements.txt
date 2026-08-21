@@ -1,0 +1,13 @@
+# Core training stack (CUDA recommended; see training/README.md for macOS notes)
+torch>=2.2
+transformers>=4.51
+datasets>=2.19
+accelerate>=0.31
+trl>=0.17
+peft>=0.11
+
+# QLoRA 4-bit training (NVIDIA GPUs only; bitsandbytes does not support macOS)
+bitsandbytes>=0.43; platform_machine == "x86_64" and sys_platform == "linux"
+
+# Optional: strict JSON-schema validation of model output
+jsonschema>=4.21

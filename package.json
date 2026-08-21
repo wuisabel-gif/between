@@ -1,0 +1,14 @@
+{
+  "name": "between",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "author": {
+    "name": "Isabel Wu",
+    "url": "https://github.com/wuisabel-gif"
+  },
+  "description": "A privacy-first prototype for uncertainty-aware interpretation of ambiguous digital messages.",
+  "scripts": {
+    "check": "node --check app.js"
+  }
+}
