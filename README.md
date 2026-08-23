@@ -1,125 +1,309 @@
 # Between
 
-**Between** is a user-controlled communication aid for autistic people: not an emotion detector, but an uncertainty-aware second look at messages whose literal words may not tell the whole story.
+**Between** is an experimental communication aid that helps autistic and neurodivergent users make sense of ambiguous digital messages.
 
-> The prototype is an optional thinking aid for autistic users. It does not speak for autistic people, read minds, diagnose anyone, or provide clinical advice.
+Instead of trying to *detect someone's emotion* or decide what a message "really means," Between gives the user a structured second look at a conversation: **what the words literally say, what else they might imply, which contextual cues support those interpretations, and how uncertain those interpretations are.**
 
-## Run it
+For example, a message like:
 
-Live site: **https://wuisabel-gif.github.io/between/**
+> **“Wow, thanks for telling me 🙃”**
 
-To run it locally, clone this repo and serve the folder with any static server:
+could be sincere, sarcastic, disappointed, playful, or something else entirely. Between keeps multiple interpretations visible rather than collapsing them into a single label.
+
+The goal is not to replace a user's judgment. It is to make hidden social and pragmatic cues easier to inspect.
+
+> **Between is an optional thinking aid, not a mind reader.** It does not diagnose people, determine someone's true intentions, or provide clinical advice.
+
+## Try it
+
+**Live demo:** https://wuisabel-gif.github.io/between/
+
+The current prototype includes three contextual examples:
+
+- “Wow thanks for telling me 🙃”
+- “Do whatever you want.”
+- “It’s fine.”
+
+You can also enter your own message and experiment with the interpretation interface.
+
+## What Between shows
+
+Rather than returning a single emotion label, Between breaks an ambiguous message into several dimensions:
+
+**Literal meaning**  
+What the words say directly.
+
+**Possible implied meanings**  
+Other plausible interpretations given the surrounding conversation.
+
+**Possible emotions**  
+Emotional readings that *might* fit, presented as possibilities rather than facts.
+
+**Speech act**  
+What the message may be doing conversationally—for example, agreeing, declining, expressing frustration, joking, or indirectly requesting something.
+
+**Literalness**  
+Whether the message appears literal, possibly nonliteral, or unclear.
+
+**Evidence**  
+The specific contextual cues that contributed to an interpretation.
+
+**Missing context**  
+Information that could substantially change the interpretation.
+
+**Confidence**  
+How strongly the available context supports the reading.
+
+**Suggested next step**  
+A reversible, low-pressure response, often involving clarification rather than assuming the interpretation is correct.
+
+## Why not just detect emotion?
+
+Digital communication is rarely a simple classification problem.
+
+Consider:
+
+> “It’s fine.”
+
+Depending on the conversation, this could mean:
+
+- everything is genuinely okay;
+- the person is disappointed but does not want to continue discussing it;
+- reluctant acceptance;
+- frustration;
+- reassurance;
+- or simply exactly what the words say.
+
+An emotion classifier might return **“negative”** or **“frustrated.”**
+
+Between instead asks:
+
+> **What are the plausible readings, what evidence supports them, and how certain can we reasonably be?**
+
+That distinction is central to the project.
+
+## Design principles
+
+### Possibilities, not verdicts
+
+Between should never present an inferred intention or emotion as a fact about another person.
+
+Multiple interpretations remain visible when the evidence is ambiguous.
+
+### Context before labels
+
+Meaning often depends on what happened before a message.
+
+Between therefore shows the context used to generate an interpretation instead of presenting an isolated emotion label.
+
+Context is treated as **evidence, not proof**.
+
+### Ask before assuming
+
+When uncertainty remains, asking the other person is usually more reliable than trusting an AI interpretation.
+
+Suggested responses therefore favor low-pressure clarification:
+
+> “Just checking—did you mean that literally, or are you frustrated with what happened?”
+
+The interpretation helps the user decide what to ask; it does not replace the conversation.
+
+### User control
+
+Between is intended to be activated by the person receiving the message.
+
+It is not designed to automatically monitor conversations or silently analyze other people.
+
+### Privacy by default
+
+A future version of Between should:
+
+- read the minimum conversation context necessary;
+- show exactly what context is being analyzed;
+- avoid retaining conversations by default;
+- never train on private messages without explicit consent;
+- support local processing where practical;
+- make automatic analysis opt-in;
+- clearly expose the model/provider being used;
+- allow the interpretation layer to be disabled at any time.
+
+The current static prototype keeps fixture data and custom text inside the page. Only display settings are stored in `localStorage`. Messages are not stored or sent to a model provider.
+
+## Current prototype
+
+The first version includes:
+
+- contextual conversation examples;
+- an interactive message view;
+- literal and implied interpretations;
+- possible emotion and speech-act descriptions;
+- uncertainty/confidence indicators;
+- evidence from surrounding context;
+- suggested clarification strategies;
+- a custom-message input;
+- a deterministic local heuristic for custom messages;
+- configurable context length and analysis modes;
+- click-to-analyze controls;
+- responsive layout;
+- keyboard-accessible interactions;
+- semantic headings and labels;
+- reduced-motion support.
+
+The custom-message analyzer is intentionally simple. It uses transparent local heuristics and **does not claim to infer a person's actual intent**.
+
+## Interpretation schema
+
+Between is built around a structured pragmatic interpretation rather than an emotion class.
+
+```json
+{
+  "literalMeaning": "What the words say on their face",
+  "possibleImpliedMeanings": [
+    "One plausible interpretation",
+    "Another plausible interpretation"
+  ],
+  "possibleEmotions": [
+    "Cautious emotional descriptors"
+  ],
+  "speechAct": "What the message may be doing conversationally",
+  "literalness": "literal | possibly-nonliteral | unclear",
+  "confidence": 0,
+  "evidence": [
+    "Contextual cues actually used"
+  ],
+  "missingContext": [
+    "Information that could change the interpretation"
+  ],
+  "suggestedAction": "A reversible, low-pressure next step"
+}
+```
+
+The most important part of the schema is not the predicted emotion.
+
+It is **uncertainty**.
+
+## Research direction
+
+Between is also an HCI/NLP research prototype exploring a broader question:
+
+> **Can language models help users inspect pragmatic and contextual meaning without encouraging them to over-trust the model's interpretation?**
+
+Future evaluation should therefore measure more than classification accuracy.
+
+Useful outcomes include:
+
+- interpretation accuracy;
+- confidence calibration;
+- cognitive load;
+- time required to understand a message;
+- user trust;
+- preference;
+- perceived usefulness;
+- whether users become more comfortable asking for clarification;
+- and whether displaying uncertainty reduces inappropriate reliance on the model.
+
+A future study could compare:
+
+1. no assistance;
+2. emotion classification only;
+3. Between-style contextual interpretation.
+
+## Model training
+
+The [`training/`](training/) directory contains an experimental fine-tuning pipeline for exploring model-based interpretation.
+
+It currently includes:
+
+- a shared interpretation/prompt contract;
+- a synthetic seed dataset generator;
+- dataset validation;
+- TRL-based training;
+- LoRA/QLoRA support;
+- an inference/evaluation CLI;
+- and experiments targeting [`Qwen/Qwen3-4B-Instruct-2507`](https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507).
+
+See [`training/README.md`](training/README.md) for the training setup, data policy, and hardware notes.
+
+The training scaffold is experimental and is **not** evidence that the model has been validated for real-world interpretation.
+
+## Roadmap
+
+### 1. Co-design with autistic users
+
+Work with autistic adults and other neurodivergent users to determine which concepts are actually useful and whether terms such as *speech act*, *literal meaning*, and *possible emotion* should be simplified or replaced.
+
+### 2. Build a privacy-preserving extension
+
+Prototype a browser extension with explicit click-to-analyze behavior and a visible preview of the context being shared.
+
+### 3. Connect a language model
+
+Compare:
+
+- local models;
+- user-controlled model providers;
+- and carefully scoped hosted inference.
+
+The UI should always expose which provider receives the context and what its retention policy is.
+
+### 4. Evaluate uncertainty
+
+Test not only whether interpretations are correct, but whether the model knows when it **doesn't have enough information**.
+
+### 5. Pilot a messaging surface
+
+Discord Web is one possible research environment, although a controlled messaging mock-up or extension test surface should come first.
+
+## Run locally
+
+Clone the repository and serve it with any static HTTP server:
 
 ```bash
+git clone https://github.com/wuisabel-gif/between.git
 cd between
 python3 -m http.server 4173
 ```
 
-Then open <http://127.0.0.1:4173>. The small `package.json` only provides a JavaScript syntax check:
+Then open:
+
+```text
+http://127.0.0.1:4173
+```
+
+To run the JavaScript syntax check:
 
 ```bash
 npm run check
 ```
 
-You can also open `index.html` directly, although a local server gives the browser the same origin behavior a future extension prototype will have.
+The prototype can also be opened directly through `index.html`, although using a local server more closely matches the browser-origin behavior needed for a future extension.
 
-## What is in this first cut
+## What Between is not
 
-- Three contextual conversation fixtures:
-  - “Wow thanks for telling me 🙃”
-  - “Do whatever you want.”
-  - “It’s fine.”
-- A message view showing the nearby context that the reading uses.
-- A structured interpretation with:
-  - literal meaning;
-  - possible implied meanings;
-  - possible emotions;
-  - speech act;
-  - a literal/nonliteral caution;
-  - confidence;
-  - evidence from context;
-  - a low-pressure suggested next step.
-- A custom-message box with a small deterministic local heuristic. It does not call an API and does not claim to understand intent.
-- A privacy/settings dialog with click-to-analyze, context-length, and analysis-mode controls.
-- Responsive layout, keyboard focus styles, semantic headings and labels, reduced-motion support, and a visible uncertainty boundary.
+Between is currently a **product and research prototype**, not a validated interpretation system.
 
-## Product principles
+It should not be used to make high-stakes judgments involving safety, consent, employment, relationships, medical decisions, or diagnosis.
 
-Between is designed for autistic people who want extra support examining ambiguous messages. It does not assume that autistic people share one communication style, and it never tries to detect, label, or disclose whether a person is autistic.
+The current version does not include:
 
-### Possibilities, not verdicts
-
-A message can be sarcastic, playful, tired, indirect, or literal. The UI keeps more than one reading visible and avoids turning a plausible inference into a fact about another person.
-
-### Context before labels
-
-The prototype shows the small context window used for a reading. It treats context as evidence, not proof. The literal words stay visible instead of being replaced by an emotion label.
-
-### Ask before assuming
-
-The suggested next step is framed as an option. A direct, low-pressure clarification is more reliable than teaching someone to trust an AI interpretation of another person.
-
-### Privacy as a product feature
-
-The intended default is click-to-analyze. A future surface should:
-
-- read the minimum context needed;
-- show what it read and when;
-- avoid retaining conversations by default;
-- avoid training on messages;
-- offer local processing where practical;
-- make automatic analysis opt-in;
-- let a person turn the layer off without losing access to the conversation.
-
-This static demo keeps fixture data and custom text in the current page only. It stores only the selected display settings in `localStorage`; it does not store messages, call a model provider, or send network requests.
-
-## What it is not yet
-
-This is a product and research prototype, not a validated interpretation system. The sample analyses are hand-authored fixtures, and custom analysis is a transparent keyword heuristic. It should not be used to make decisions about safety, consent, employment, relationships, or a person’s diagnosis.
-
-The prototype deliberately does **not** include:
-
-- a Discord bot or browser extension;
-- a server-side model;
-- automatic reading of a real conversation;
-- identity or relationship memory;
-- claims of clinical efficacy or interpretation accuracy.
-
-## Suggested next steps
-
-1. **Co-design the vocabulary.** Work with autistic adults and other neurodivergent users to decide whether labels such as “speech act,” “literal meaning,” and “possible emotion” are useful, overwhelming, or need different wording.
-2. **Build a privacy-preserving extension shell.** Start with a Chrome content script for a local test surface. Add an explicit context preview and a click-to-read interaction before considering automatic analysis.
-3. **Define a structured interpretation contract.** Keep the output schema close to the UI: literal reading, alternatives, evidence, uncertainty, and suggested clarification. Require the model to say when context is insufficient.
-4. **Evaluate calibration, not just classification.** Test interpretation accuracy, confidence calibration, time, cognitive load, trust, preference, and whether users feel more able to ask clarifying questions. Include an emotion-only comparison and a no-assistance control.
-5. **Add a model behind a privacy boundary.** Compare a local model, a user-controlled provider, and a carefully scoped hosted service. Make the provider, retention behavior, context window, and cost visible.
-6. **Pilot one surface.** Discord Web is a plausible research surface, but its DOM and policy constraints change. A small mock messaging surface or extension test page should come before a live integration.
-
-## Training scaffold
-
-The [`training/`](training/) folder contains an experimental fine-tuning pipeline for the interpretation model: a shared prompt contract, a synthetic seed dataset (`training/data/build_seed.py`), a dataset validator, a TRL + LoRA/QLoRA script targeting [`Qwen/Qwen3-4B-Instruct-2507`](https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507), and an inference/eval CLI. See [`training/README.md`](training/README.md) for the data policy and hardware notes.
+- automatic monitoring of conversations;
+- a Discord bot;
+- a production browser extension;
+- a server-side interpretation model;
+- identity or relationship profiling;
+- claims of clinical efficacy;
+- claims that inferred emotions or intentions are objectively correct.
 
 ## Contributing
 
-Issues and pull requests are welcome. Please keep contributions consistent with the product principles above: possibilities over verdicts, visible uncertainty, and privacy-first defaults. Do not open issues containing real private conversations.
+Issues and pull requests are welcome.
+
+Contributions should follow three core principles:
+
+**possibilities over verdicts, uncertainty over false confidence, and user control over automatic analysis.**
+
+Please do not include real private conversations in issues, examples, datasets, or pull requests.
 
 ## License
 
 [MIT](LICENSE)
-
-## A possible interpretation schema
-
-```json
-{
-  "literalMeaning": "What the words say on their face",
-  "possibleImpliedMeanings": ["At least one alternative", "Another plausible reading"],
-  "possibleEmotions": ["Use cautious descriptors, not a diagnosis"],
-  "speechAct": "What the message may be doing in the conversation",
-  "literalness": "literal | possibly-nonliteral | unclear",
-  "confidence": 0,
-  "evidence": ["Contextual cues actually used"],
-  "missingContext": ["What would change the reading"],
-  "suggestedAction": "A reversible, low-pressure next step"
-}
-```
-
-The schema is intentionally about **pragmatic interpretation** rather than a single emotion class. The most important field is still uncertainty.
