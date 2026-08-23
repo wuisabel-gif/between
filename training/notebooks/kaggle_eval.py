@@ -31,12 +31,34 @@ HF_FALLBACK_IDS = {
     "qwen3_06b": "Qwen/Qwen3-0.6B",
 }
 
+import subprocess
+import sys
+
 if RUN_PIP:
-    import subprocess
-    import sys
+    # -U matters: Kaggle preinstalls a transformers 4.x that already satisfies
+    # ">=4.53", so without --upgrade pip silently keeps the old one and new
+    # architectures (e.g. gemma4) fail with KeyError in CONFIG_MAPPING.
     subprocess.run(
-        [sys.executable, "-m", "pip", "install", "-q",
-         "transformers>=4.53", "accelerate", "sentencepiece"],
+        [sys.executable, "-m", "pip", "install", "-q", "-U",
+         "transformers", "accelerate", "sentencepiece"],
+        check=True,
+    )
+
+
+def _supports_model_type(model_type):
+    try:
+        from transformers.models.auto.configuration_auto import CONFIG_MAPPING_NAMES
+        return model_type in CONFIG_MAPPING_NAMES
+    except Exception:
+        return True  # never block the run on introspection failure
+
+
+# Gemma 4 checkpoints declare model_type "gemma4" (transformers >= 5.5.0).
+if MODEL_KEY.startswith("gemma") and not _supports_model_type("gemma4"):
+    print("installed transformers lacks 'gemma4' (needs >= 5.5); upgrading ...")
+    subprocess.run(
+        [sys.executable, "-m", "pip", "install", "-q", "-U",
+         "git+https://github.com/huggingface/transformers.git"],
         check=True,
     )
 
@@ -200,12 +222,24 @@ def load_model():
     print(f"loading {model_id} ...")
     tokenizer = AutoTokenizer.from_pretrained(model_id)
 
-    from transformers import AutoModelForCausalLM, AutoModelForImageTextToText
-    try:
-        model = load_with(AutoModelForCausalLM)
-    except Exception as exc:
-        print(f"AutoModelForCausalLM failed ({type(exc).__name__}); trying image-text-to-text ...")
-        model = load_with(AutoModelForImageTextToText)
+    # Gemma 4 is multimodal; which auto class fits depends on the transformers
+    # version, so try the known candidates in order.
+    import transformers
+    last_exc = None
+    model = None
+    for name in ("AutoModelForCausalLM", "AutoModelForImageTextToText", "AutoModelForMultimodalLM"):
+        cls = getattr(transformers, name, None)
+        if cls is None:
+            continue
+        try:
+            model = load_with(cls)
+            print(f"loaded via {name}")
+            break
+        except Exception as exc:
+            last_exc = exc
+            print(f"{name} failed ({type(exc).__name__}); trying next loader ...")
+    if model is None:
+        raise last_exc
     model.eval()
     print("loaded.")
     return model, tokenizer
